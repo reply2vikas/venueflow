@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="VenueFlow — crowd-aware, accessibility-first stadium navigator"/>
+  <meta name="theme-color" content="#0f172a"/>
+  <title>VenueFlow</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header role="banner">
+    <h1>VenueFlow</h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span id="offlineTag" aria-live="polite" style="display:none;font-size:12px;color:#f97316">Offline</span>
+      <button id="accessBtn" aria-label="Toggle large text mode" aria-pressed="false">Large Text</button>
+    </div>
+  </header>
+  <nav role="navigation" aria-label="Main navigation">
+    <div class="tab-row" role="tablist">
+      <button class="tab active" role="tab" aria-selected="true"  id="tab-zones">Zones</button>
+      <button class="tab"        role="tab" aria-selected="false" id="tab-navigate">Navigate</button>
+      <button class="tab"        role="tab" aria-selected="false" id="tab-alerts">Alerts</button>
+      <button class="tab"        role="tab" aria-selected="false" id="tab-ai">Ask AI</button>
+    </div>
+  </nav>
+  <main id="main-content" role="main">
+    <section id="panel-zones" aria-label="Live crowd density">
+      <h2>Live Crowd Zones</h2>
+      <div id="zoneList" role="list" aria-live="polite"></div>
+      <p style="font-size:12px;color:#64748b;margin-top:8px" id="zonesLastUpdated"></p>
+    </section>
+    <section id="panel-navigate" aria-label="Route navigation" hidden>
+      <h2>Navigate</h2>
+      <div class="form-group">
+        <label for="fromInput">Starting point</label>
+        <input id="fromInput" type="text" placeholder="e.g. gate_A" autocomplete="off"/>
+      </div>
+      <div class="form-group">
+        <label for="toInput">Destination</label>
+        <input id="toInput" type="text" placeholder="e.g. section_F" autocomplete="off"/>
+      </div>
+      <div class="toggle-row">
+        <label for="wheelchairToggle">Wheelchair / Step-free only</label>
+        <input id="wheelchairToggle" type="checkbox" role="switch" aria-checked="false"/>
+      </div>
+      <button id="routeBtn">Find Best Route</button>
+      <div id="routeResult" role="alert" aria-live="assertive"></div>
+    </section>
+    <section id="panel-alerts" aria-label="Venue alerts" hidden>
+      <h2>Alerts</h2>
+      <div id="alertList" role="log" aria-live="assertive"></div>
+    </section>
+    <section id="panel-ai" aria-label="AI assistant" hidden>
+      <h2>Ask VenueFlow AI</h2>
+      <p style="font-size:13px;color:#94a3b8;margin-bottom:12px">Powered by Google Vertex AI (Gemini 1.5 Flash)</p>
+      <div class="form-group">
+        <label for="aiQuestion">Your question (max 200 chars)</label>
+        <input id="aiQuestion" type="text" maxlength="200" placeholder="e.g. Which gate has shortest queue?"/>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">
+        <button class="quick-q" onclick="askQuick('Which gate has the shortest queue right now?')">Shortest queue?</button>
+        <button class="quick-q" onclick="askQuick('Where is the nearest accessible restroom?')">Nearest restroom?</button>
+        <button class="quick-q" onclick="askQuick('When should I leave to avoid exit rush?')">Best time to leave?</button>
+        <button class="quick-q" onclick="askQuick('Where can I get food quickly?')">Quick food?</button>
+      </div>
+      <button id="aiBtn">Ask AI</button>
+      <div id="aiResult" role="alert" aria-live="assertive" style="margin-top:12px"></div>
+      <p style="font-size:10px;color:#475569;margin-top:8px">No personal data sent. Only anonymised crowd data is included.</p>
+    </section>
+  </main>
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .catch(e => console.warn('SW:', e));
+    }
+    window.addEventListener('offline', () => { document.getElementById('offlineTag').style.display='inline'; });
+    window.addEventListener('online',  () => { document.getElementById('offlineTag').style.display='none'; });
+  </script>
+</body>
+</html>

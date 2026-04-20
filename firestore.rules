@@ -1,0 +1,62 @@
+rules_version = '2';
+
+// VenueFlow Firestore Security Rules
+// Principle: least privilege — read what you need, write nothing from the client.
+//
+// Data model:
+//   /zones/{zone_id}         — public read, worker-only write
+//   /alerts/{alert_id}       — public read, admin-only write
+//   /sessions/{session_id}   — owner read/write (anonymous auth scoped)
+//   /feedback/{feedback_id}  — authenticated write, no read
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Zone density data ─────────────────────────────────────────────────
+    // Any client (authenticated or not) can read zone data.
+    // Only the backend service account (worker) can write.
+    match /zones/{zoneId} {
+      allow read: if true;
+      allow write: if false;  // Backend service account bypasses these rules
+    }
+
+    // ── Venue alerts ──────────────────────────────────────────────────────
+    // Public read. Admin writes only (via Firebase Admin SDK from backend).
+    match /alerts/{alertId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // ── User sessions ─────────────────────────────────────────────────────
+    // Anonymous Firebase Auth users can read/write their own session only.
+    // Session document stores: accessibility prefs, last known zone.
+    // NEVER stores: name, email, phone, or any identifying information.
+    match /sessions/{sessionId} {
+      allow read, write: if
+        request.auth != null
+        && request.auth.uid == sessionId
+        && isValidSessionData(request.resource.data);
+
+      // Session data is auto-deleted after 8 hours via TTL policy
+    }
+
+    // ── Anonymous feedback ────────────────────────────────────────────────
+    // Write-only from authenticated users. No reading back — prevents scraping.
+    match /feedback/{feedbackId} {
+      allow create: if
+        request.auth != null
+        && request.resource.data.keys().hasOnly(['rating', 'zone_id', 'timestamp'])
+        && request.resource.data.rating is int
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow read, update, delete: if false;
+    }
+
+    // ── Helper functions ──────────────────────────────────────────────────
+    function isValidSessionData(data) {
+      return data.keys().hasOnly(['wheelchair', 'language', 'last_zone', 'updated_at'])
+        && data.wheelchair is bool
+        && data.language in ['en', 'kn', 'hi', 'ta'];
+    }
+  }
+}

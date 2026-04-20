@@ -1,0 +1,53 @@
+{
+  "venue": "chinnaswamy_stadium",
+  "nodes": {
+    "gate_A": {"accessible": true, "label": "Gate A (North)"},
+    "gate_B": {"accessible": true, "label": "Gate B (East)"},
+    "gate_C": {"accessible": true, "label": "Gate C (West, Accessible)"},
+    "concourse_north": {"accessible": true, "label": "North Concourse"},
+    "concourse_south": {"accessible": true, "label": "South Concourse"},
+    "ramp_N1": {"accessible": true, "label": "North Ramp"},
+    "stairs_E1": {"accessible": false, "label": "East Stairwell"},
+    "lift_W1": {"accessible": true, "label": "West Lift"},
+    "restroom_accessible_F": {"accessible": true, "label": "Accessible Restroom F"},
+    "food_court_E": {"accessible": true, "label": "Food Court East"},
+    "section_B": {"accessible": true, "label": "Section B"},
+    "section_F": {"accessible": true, "label": "Section F (Accessible Seating)"},
+    "exit_main": {"accessible": true, "label": "Main Exit"},
+    "exit_north": {"accessible": true, "label": "North Exit (Accessible)"}
+  },
+  "edges": {
+    "gate_A": {
+      "concourse_north": {"distance_m": 80, "accessible": true}
+    },
+    "gate_B": {
+      "stairs_E1": {"distance_m": 30, "accessible": false},
+      "concourse_north": {"distance_m": 120, "accessible": true}
+    },
+    "gate_C": {
+      "lift_W1": {"distance_m": 20, "accessible": true},
+      "concourse_south": {"distance_m": 60, "accessible": true}
+    },
+    "concourse_north": {
+      "ramp_N1": {"distance_m": 50, "accessible": true},
+      "food_court_E": {"distance_m": 90, "accessible": true},
+      "section_B": {"distance_m": 110, "accessible": true}
+    },
+    "concourse_south": {
+      "lift_W1": {"distance_m": 40, "accessible": true},
+      "restroom_accessible_F": {"distance_m": 30, "accessible": true}
+    },
+    "ramp_N1": {
+      "section_B": {"distance_m": 60, "accessible": true}
+    },
+    "lift_W1": {
+      "section_F": {"distance_m": 70, "accessible": true}
+    },
+    "section_B": {
+      "exit_main": {"distance_m": 150, "accessible": true}
+    },
+    "section_F": {
+      "exit_north": {"distance_m": 100, "accessible": true}
+    }
+  }
+}
