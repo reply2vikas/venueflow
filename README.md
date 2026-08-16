@@ -5,7 +5,7 @@
 [![CI/CD](https://github.com/YOUR_USERNAME/venueflow/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/YOUR_USERNAME/venueflow/actions)
 
 ## Live Demo
-**🌐 [(https://venueflow-76696047829.asia-south1.run.app/)](https://venueflow-xxxx-em.a.run.app)**
+**🌐 https://venueflow-76696047829.asia-south1.run.app/**
 > Scan the QR code at any entrance gate to open instantly — no download needed.
 
 ---
